@@ -1,0 +1,33 @@
+name: Upload to PyPI
+
+on:
+  push:
+    branches:
+      - main  # Ändere dies entsprechend dem Namen deines Hauptbranches
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install build twine
+
+    - name: Build package
+      run: python -m build
+
+    - name: Upload to PyPI
+      run: twine upload dist/*
+      env:
+        TWINE_USERNAME: __token__  # Benutze "__token__" für den Benutzernamen
+        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
